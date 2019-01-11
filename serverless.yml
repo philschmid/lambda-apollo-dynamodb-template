@@ -9,18 +9,16 @@ plugins:
 provider:
   name: aws
   runtime: nodejs8.10
+  # deploymentBucket: lambda-apollo-dynamodb-d-serverlessdeploymentbuck-t9pc8fb6q2vd
   environment:
-    DYNAMODB_TABLE: ${self:service}-${self:provider.stage}
+    DYNAMODB_TABLE: userTable2
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:DescribeTable
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
+        - dynamodb:*
+        - lambda:*
+        - cloudformation:*
+        - s3:*
       Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}'
   vpc:
   securityGroupIds:
@@ -57,24 +55,36 @@ resources: # CloudFormation template syntax
   Resources:
     usersTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: 'Retain'
       Properties:
         AttributeDefinitions:
-          - AttributeName: uuid
+          - AttributeName: userid
             AttributeType: S
           - AttributeName: username
             AttributeType: S
+          - AttributeName: age
+            AttributeType: N
         KeySchema:
-          - AttributeName: uuid
+          - AttributeName: userid
             KeyType: HASH
           - AttributeName: username
             KeyType: RANGE
+        LocalSecondaryIndexes:
+          - IndexName: lsiAgeIndex
+            KeySchema:
+              - AttributeName: userid
+                KeyType: HASH
+              - AttributeName: age
+                KeyType: RANGE
+            Projection:
+              ProjectionType: KEYS_ONLY
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: userTable
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
 custom:
   dynamodb:
-  # If you only want to use DynamoDB Local in some stages, declare them here
+    # If you only want to use DynamoDB Local in some stages, declare them here
     stages:
       - dev
     start:

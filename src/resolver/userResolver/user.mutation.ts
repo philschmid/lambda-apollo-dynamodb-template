@@ -1,7 +1,8 @@
 /** @format */
 
-import {User} from '../models/user'
-import {mapper} from '../service/datamapper'
+import {User} from '../../models/user'
+import {mapper} from '../../service/datamapper'
+import {equals, between} from '@aws/dynamodb-expressions'
 
 export const createUser = args => {
   const toSave = Object.assign(new User(), args)

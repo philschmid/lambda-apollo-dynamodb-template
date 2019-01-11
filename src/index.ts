@@ -3,8 +3,9 @@
 //FIXME: for Serverless deployement
 import {ApolloServer, defaultPlaygroundOptions} from 'apollo-server-lambda'
 
-import {createUser} from './resolver/User.Resolver'
+import {createUser, getUserByPK, getAllUserById, getAllUserByIdWithUsernameBW} from './resolver'
 import {schema} from './schema/schema'
+import {getUserByFilterName, getUserByFilterLSI, getUserByFilterLSICON} from './resolver/userResolver/user.query.filter'
 // import schema = require('./src/schema/schema.graphql')
 // const typeDefs = importSchema(schema)
 // const typeDefs = schema
@@ -13,6 +14,28 @@ import {schema} from './schema/schema'
 const resolvers = {
   Query: {
     hello: () => 'Hello World',
+    getUserById: async (obj, args, context, info) => {
+      return getUserByPK(args)
+    },
+    getAllUserById: async (obj, args, context, info) => {
+      return getAllUserById(args, 'username')
+    },
+    // getAllUserByAge: async (obj, args, context, info) => {
+    //   return getAllUserByAge(args, 'age')
+    // },
+    getAllUserByIdWithUsernameBW: async (obj, args, context, info) => {
+      return getAllUserByIdWithUsernameBW(args, 'age')
+    },
+
+    getUserByFilterName: async (obj, args, context, info) => {
+      return getUserByFilterName(args)
+    },
+    getUserByFilterLSI: async (obj, args, context, info) => {
+      return getUserByFilterLSI(args)
+    },
+    getUserByFilterLSICON: async (obj, args, context, info) => {
+      return getUserByFilterLSICON(args)
+    },
   },
   Mutation: {
     createUser: async (obj, args, context, info) => {
