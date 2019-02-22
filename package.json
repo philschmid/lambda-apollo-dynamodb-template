@@ -13,6 +13,7 @@
     "@types/debug": "0.0.31",
     "@types/node": "^10.12.11",
     "apollo-server": "^2.3.1",
+    "node.extend": "^2.0.2",
     "serverless-offline": "^3.32.1",
     "serverless-plugin-tracing": "^2.0.0",
     "serverless-plugin-typescript": "^1.1.5",
